@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEO Vision - Advanced SEO Analysis Dashboard</title>
+  <meta name="description" content="Comprehensive SEO analysis tools for website optimization and performance tracking">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%);
+    }
+    .sidebar-link:hover .sidebar-icon {
+      transform: translateX(3px);
+    }
+    .sidebar-icon {
+      transition: transform 0.2s ease;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .blink {
+      animation: blink 1.5s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <div class="hidden md:flex md:flex-shrink-0">
+      <div class="flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-center h-16 px-4 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white">
+              <i class="fas fa-search"></i>
+            </div>
+            <span class="text-xl font-bold">SEO Vision</span>
+          </div>
+        </div>
+        <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+          <nav class="flex-1 space-y-2">
+            <a href="#" data-tab="dashboard" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <i class="sidebar-icon fas fa-chart-pie mr-3"></i>
+              Dashboard
+            </a>
+            <a href="#" data-tab="keywords" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <i class="sidebar-icon fas fa-key mr-3"></i>
+              Keywords
+            </a>
+            <a href="#" data-tab="backlinks" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <i class="sidebar-icon fas fa-link mr-3"></i>
+              Backlinks
+            </a>
+            <a href="#" data-tab="content" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <i class="sidebar-icon fas fa-file-alt mr-3"></i>
+              Content Analysis
+            </a>
+            <a href="#" data-tab="speed" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <i class="sidebar-icon fas fa-tachometer-alt mr-3"></i>
+              Page Speed
+            </a>
+            <a href="#" data-tab="competitors" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <i class="sidebar-icon fas fa-chess-king mr-3"></i>
+              Competitors
+            </a>
+          </nav>
+          <div class="mt-auto pb-4">
+            <div class="flex items-center px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+              <div class="text-sm">
+                <p class="font-medium">Daily Scan Limit</p>
+                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-1">
+                  <div class="bg-blue-500 h-2 rounded-full" style="width: 65%"></div>
+                </div>
+                <p class="text-xs mt-1">13/20 scans used</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="flex flex-col flex-1 overflow-hidden">
+      <!-- Top navigation -->
+      <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div class="flex items-center">
+          <!-- Mobile menu button -->
+          <button class="md:hidden text-gray-500 dark:text-gray-400 mr-2">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 class="text-lg font-semibold">SEO Analysis Dashboard</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <input type="text" placeholder="Analyze URL..." class="pl-10 pr-4 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
+          </div>
+          <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i class="fas fa-moon dark:hidden"></i>
+            <i class="fas fa-sun hidden dark:block"></i>
+          </button>
+          <div class="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+            <i class="fas fa-user text-sm"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content area -->
+      <div class="flex-1 overflow-auto p-4 bg-gray-50 dark:bg-gray-900">
+        <!-- Dashboard Tab Content -->
+        <div id="dashboard" class="tab-content active">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm">SEO Score</p>
+                  <h3 class="text-2xl font-bold mt-1">87<span class="text-sm">/100</span></h3>
+                </div>
+                <div class="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
+                  <i class="fas fa-arrow-up"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full">
+                  <div class="h-2 bg-green-500 rounded-full" style="width: 87%"></div>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Improved by 4% this month</p>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm">Organic Traffic</p>
+                  <h3 class="text-2xl font-bold mt-1">4,327</h3>
+                </div>
+                <div class="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="flex items-center text-green-500 text-sm">
+                  <i class="fas fa-arrow-up mr-1"></i>
+                  <span>12.5% increase</span>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">From last month</p>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm">Top Keywords</p>
+                  <h3 class="text-2xl font-bold mt-1">28</h3>
+                </div>
+                <div class="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                  <i class="fas fa-key"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="flex items-center text-green-500 text-sm">
+                  <i class="fas fa-plus mr-1"></i>
+                  <span>4 new keywords</span>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">In top 10 positions</p>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm">Backlinks</p>
+                  <h3 class="text-2xl font-bold mt-1">1,243</h3>
+                </div>
+                <div class="h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
+                  <i class="fas fa-link"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="flex items-center text-red-500 text-sm">
+                  <i class="fas fa-arrow-down mr-1"></i>
+                  <span>3 lost links</span>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">In the last week</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Traffic Sources Chart -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 lg:col-span-2">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Traffic Sources</h3>
+                <select class="text-sm border rounded px-2 py-1 bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                  <option>Last 7 days</option>
+                  <option>Last 30 days</option>
+                  <option>Last 90 days</option>
+                </select>
+              </div>
+              <div class="h-64">
+                <canvas id="trafficChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Top Pages -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <h3 class="text-lg font-semibold mb-4">Top Performing Pages</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-500 mr-3">
+                      <i class="fas fa-file-alt text-sm"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium truncate">/products/seo-tool</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">6.3k visits</p>
+                    </div>
+                  </div>
+                  <span class="text-sm font-medium text-green-500">+12.5%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center text-purple-500 mr-3">
+                      <i class="fas fa-file-alt text-sm"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium truncate">/blog/seo-tips</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">4.1k visits</p>
+                    </div>
+                  </div>
+                  <span class="text-sm font-medium text-green-500">+8.2%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center text-yellow-500 mr-3">
+                      <i class="fas fa-file-alt text-sm"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium truncate">/pricing</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">3.5k visits</p>
+                    </div>
+                  </div>
+                  <span class="text-sm font-medium text-red-500">-2.1%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded bg-green-100 dark:bg-green-900/20 flex items-center justify-center text-green-500 mr-3">
+                      <i class="fas fa-file-alt text-sm"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium truncate">/about-us</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">2.8k visits</p>
+                    </div>
+                  </div>
+                  <span class="text-sm font-medium text-green-500">+5.3%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Keyword Positions -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Keyword Positions</h3>
+                <button class="text-sm text-blue-500 hover:text-blue-700 dark:hover:text-blue-400">View All</button>
+              </div>
+              <div class="overflow-auto">
+                <table class="min-w-full">
+                  <thead>
+                    <tr class="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                      <th class="pb-2 font-medium">Keyword</th>
+                      <th class="pb-2 font-medium">Position</th>
+                      <th class="pb-2 font-medium">Change</th>
+                      <th class="pb-2 font-medium">Volume</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tr>
+                      <td class="py-3 text-sm font-medium">seo tools</td>
+                      <td class="py-3 text-sm">4</td>
+                      <td class="py-3 text-sm text-green-500">↑2</td>
+                      <td class="py-3 text-sm">12,400</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 text-sm font-medium">keyword research</td>
+                      <td class="py-3 text-sm">8</td>
+                      <td class="py-3 text-sm text-green-500">↑1</td>
+                      <td class="py-3 text-sm">8,900</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 text-sm font-medium">on page seo</td>
+                     
